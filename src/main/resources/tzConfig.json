@@ -1,0 +1,14 @@
+{
+  "tzBot": {
+    "address": "localhost",
+    "port": 8888,
+    "apiKey": "",
+    "encryptionKey": "",
+    "retryAfterIfInaccessible": 10
+  },
+  "webhook": {
+    "url": "",
+    "sendUnavailableMessages": false,
+    "serviceUnavailableMessage": "TZBot service is not available!"
+  }
+}
