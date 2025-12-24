@@ -18,6 +18,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,7 +39,7 @@ public class TZBot4J {
 
     private final HttpClient webhookClient = HttpClient.newHttpClient();
     private final AtomicBoolean isServiceUp = new AtomicBoolean(false);
-    private final List<UUID> timezoneQueue = new ArrayList<>();
+    private final PriorityQueue<UUID> timezoneQueue = new PriorityQueue<>();
 
     public static TZBot4J init(Logger logger, Path dataDir) {
         if(INSTANCE != null) return INSTANCE;
@@ -97,7 +98,18 @@ public class TZBot4J {
 
         scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
+            boolean prev = isServiceUp.get();
             isServiceUp.set(client.isTzBotUp());
+
+            if(!prev && isServiceUp.get()) {
+                while (!timezoneQueue.isEmpty()) {
+                    UUID uuid = timezoneQueue.poll();
+                    TZResponse resp = client.send(new TZRequest(new TimezoneFromUUIDData(uuid)));
+                    if(resp != null && resp.isSuccessful()) manager.addTimezone(uuid, resp.getAsString());
+                    else LOGGER.error("Got a bad response! UUID: %s".formatted(uuid));
+                }
+            }
+
             if(!isServiceUp.get()) sendServiceUnavailableMsg();
         }, 0, config.getTzBot().getRetryAfterIfInaccessible(), TimeUnit.MINUTES);
 
@@ -116,15 +128,7 @@ public class TZBot4J {
 
         try {
             HttpResponse<String> response = webhookClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() != 200) LOGGER.error("Discord API is unavailable!");
-            else {
-                for(UUID uuid : List.copyOf(timezoneQueue)) {
-                    TZResponse resp = client.send(new TZRequest(new TimezoneFromUUIDData(uuid)));
-                    if(resp != null && resp.isSuccessful()) manager.addTimezone(uuid, resp.getAsString());
-                    else LOGGER.error("Got a bad response! UUID: %s".formatted(uuid));
-                    timezoneQueue.remove(uuid);
-                }
-            }
+            if(!String.valueOf(response.statusCode()).startsWith("2")) LOGGER.error("Discord API is unavailable!");
         } catch (InterruptedException | IOException e) {
             LOGGER.error("Discord API is unavailable! Error: %s".formatted(e.getMessage()));
         }

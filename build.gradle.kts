@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    `maven-publish`
 }
 
 group = "com.m3z0id.tzbot4j"
@@ -27,5 +28,26 @@ dependencies {
 tasks {
     compileJava {
         options.release = 21
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "mezoidmvn"
+            url = uri("https://mezoidmvn.arcator.co.uk/releases")
+            credentials(PasswordCredentials::class)
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.m3z0id"
+            artifactId = "TZBot4J"
+            version = version
+            from(components["java"])
+        }
     }
 }
