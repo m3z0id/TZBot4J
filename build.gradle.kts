@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.m3z0id.tzbot4j"
-version = "1.0.11"
+version = "1.0.12"
 description = "TZBot Java library"
 
 java {
