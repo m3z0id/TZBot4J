@@ -10,9 +10,8 @@ public class IsLinkedData implements Identifiable {
         this.uuid = uuid;
     }
 
-    @NotNull
     @Override
-    public String getRequestType() {
-        return "IS_LINKED";
+    public byte getRequestId() {
+        return 5;
     }
 }

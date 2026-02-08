@@ -7,6 +7,7 @@ public class APIConfig {
     private uint16_t port;
     private String apiKey;
     private String encryptionKey;
+    private boolean gunzip;
     int retryAfterIfInaccessible;
 
     public boolean validate() {
@@ -17,4 +18,5 @@ public class APIConfig {
     public String getApiKey() { return apiKey; }
     public int getRetryAfterIfInaccessible() { return retryAfterIfInaccessible; }
     public String getEncryptionKey() { return encryptionKey; }
+    public boolean shouldGunzip() { return gunzip; }
 }

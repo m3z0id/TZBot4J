@@ -17,4 +17,12 @@ public class TZResponse {
         if(message instanceof Integer msgInt) return msgInt;
         else return 0;
     }
+
+    @Override
+    public String toString() {
+        return "TZResponse{" +
+                "code=" + code +
+                ", message=" + message +
+                '}';
+    }
 }

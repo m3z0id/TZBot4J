@@ -10,9 +10,8 @@ public class UserIDFromUUIDData implements Identifiable {
         this.uuid = uuid;
     }
 
-    @NotNull
     @Override
-    public String getRequestType() {
-        return "USER_ID_FROM_UUID";
+    public byte getRequestId() {
+        return 6;
     }
 }

@@ -10,9 +10,8 @@ public class TimezoneFromUUIDData implements Identifiable {
         this.uuid = uuid;
     }
 
-    @NotNull
     @Override
-    public String getRequestType() {
-        return "TIMEZONE_FROM_UUID";
+    public byte getRequestId() {
+        return 4;
     }
 }

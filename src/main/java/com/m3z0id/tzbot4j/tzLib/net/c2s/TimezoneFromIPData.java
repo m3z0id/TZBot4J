@@ -8,9 +8,8 @@ public class TimezoneFromIPData implements Identifiable {
         this.ip = ip;
     }
 
-    @NotNull
     @Override
-    public String getRequestType() {
-        return "TIMEZONE_FROM_IP";
+    public byte getRequestId() {
+        return 2;
     }
 }

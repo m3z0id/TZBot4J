@@ -13,9 +13,8 @@ public class TimezonePostData implements Identifiable {
         this.timezone = timezone;
     }
 
-    @NotNull
     @Override
-    public String getRequestType() {
-        return "USER_ID_UUID_LINK_POST";
+    public byte getRequestId() {
+        return 3;
     }
 }
