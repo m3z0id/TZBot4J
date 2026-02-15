@@ -15,7 +15,6 @@ import com.m3z0id.tzbot4j.exception.RequestNotNeededException;
 import com.m3z0id.tzbot4j.factory.AES256Factory;
 import com.m3z0id.tzbot4j.factory.ChaCha20Factory;
 import com.m3z0id.tzbot4j.factory.GunzipFactory;
-import com.m3z0id.tzbot4j.network.TCPSocket;
 import com.m3z0id.tzbot4j.network.UDPSocket;
 import com.m3z0id.tzbot4j.tzLib.net.c2s.PingData;
 import com.m3z0id.tzbot4j.tzLib.net.c2s.TimezoneFromIPData;
@@ -36,7 +35,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class TZBotClient {
-    private final TCPSocket tcp;
     private final UDPSocket udp;
     private final String apiKey;
     private AES256Factory aes;
@@ -65,10 +63,7 @@ public class TZBotClient {
     private int targetFlags;
 
     public TZBotClient(String hostname, uint16_t port, String encryptionKey, String apiKey, TZBot4J instance, TZFlag... targetFlags) throws SocketException, UnknownHostException {
-        tcp = new TCPSocket(hostname, port.get());
         udp = new UDPSocket(hostname, port.get());
-
-        tcp.setTimeout(2000);
         udp.setTimeout(2000);
 
         if(encryptionKey != null && !encryptionKey.isEmpty()) {
@@ -231,7 +226,6 @@ public class TZBotClient {
     }
 
     public void close() throws IOException {
-        tcp.close();
         udp.close();
         scheduler.close();
         running.set(false);
