@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.m3z0id.tzbot4j"
-version = "1.0.12"
+version = "1.0.13"
 description = "TZBot Java library"
 
 java {
@@ -62,5 +62,5 @@ publishing {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    // useJUnitPlatform()
 }
