@@ -11,6 +11,7 @@ import com.m3z0id.tzbot4j.tzLib.net.c2s.TimezoneFromUUIDData;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +38,7 @@ public class TZBot4J {
         } catch (IOException ignored) {}
     }
 
-    public void addPlayer(UUID uuid, String fallbackIP, Predicate<UUID> isStillOnline) {
+    public void addPlayer(UUID uuid, String fallbackIP, Predicate<UUID> isStillOnline) throws UnknownHostException {
         CompletableFuture<TZResponse> uuidFuture = client.queueRequestInternal(new TZRequest(new TimezoneFromUUIDData(uuid)));
         CompletableFuture<TZResponse> ipFuture = client.queueRequestInternal(new TZRequest(new TimezoneFromIPData(fallbackIP)));
 
