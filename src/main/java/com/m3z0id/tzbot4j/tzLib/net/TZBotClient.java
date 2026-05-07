@@ -14,7 +14,6 @@ import com.m3z0id.tzbot4j.exception.RequestFailedException;
 import com.m3z0id.tzbot4j.exception.RequestNotNeededException;
 import com.m3z0id.tzbot4j.factory.AES256Factory;
 import com.m3z0id.tzbot4j.factory.ChaCha20Factory;
-import com.m3z0id.tzbot4j.factory.GunzipFactory;
 import com.m3z0id.tzbot4j.network.UDPSocket;
 import com.m3z0id.tzbot4j.tzLib.net.c2s.PingData;
 import com.m3z0id.tzbot4j.tzLib.net.c2s.TimezoneFromIPData;
@@ -28,7 +27,6 @@ import java.net.UnknownHostException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,7 +37,6 @@ public class TZBotClient {
     private final String apiKey;
     private AES256Factory aes;
     private ChaCha20Factory chacha;
-    private final GunzipFactory gunzip = new GunzipFactory();
     private final ObjectMapper jsonMapper = new ObjectMapper()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
@@ -130,11 +127,6 @@ public class TZBotClient {
                 byteRepr = packMapper.writeValueAsBytes(request);
             } catch (JsonProcessingException ignored) {}
         }
-        if((targetFlags & TZFlag.GZIP.getVal()) != 0) {
-            try {
-                byteRepr = gunzip.compress(byteRepr);
-            } catch (IOException ignored) {}
-        }
         if((targetFlags & TZFlag.AES.getVal()) != 0 || (targetFlags & TZFlag.CHACHA20.getVal()) != 0) {
             header[5] = (byte) (((byteRepr.length + 28) >> 8) & 0xFF);
             header[6] = (byte) ((byteRepr.length + 28) & 0xFF);
@@ -183,14 +175,6 @@ public class TZBotClient {
         } else if((flags & TZFlag.CHACHA20.getVal()) != 0) {
             try {
                 body = chacha.decrypt(body, header);
-            } catch (Exception ignored) {
-                return null;
-            }
-        }
-
-        if((flags & TZFlag.GZIP.getVal()) != 0) {
-            try {
-                body = gunzip.decompress(body);
             } catch (Exception ignored) {
                 return null;
             }
